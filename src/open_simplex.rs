@@ -239,3 +239,41 @@ pub fn open_simplex3<T: Float>(seed: &Seed, point: &::Point3<T>) -> T {
 
     return value * math::cast(NORM_CONSTANT_3D);
 }
+
+// Factors for the polynomial in the normalize_simplex function.
+// These factors are derived by sampling the input function (in this case open_simplex2 and
+// open_siplex3). The output range is then divided into bins (in this case 1000), and the
+// respective bin value is incremented. When doing a high number of samples, this will give us a
+// histogram of the probability distribution of the function.
+//
+// The next step is to perform a Probability integral transform. In our case this is done by doing
+// a cumulative sum on the histogram, from left to right. This would be the integral. This would
+// give us the graph of the Cumulative distribution function of the simplex noise function.
+//
+// We then perform a polynomial fit on the graph to obtain the terms below. This is where it gets
+// slightly iffy, as we could greatly simplify this, and possibly improve the accuracy of the
+// transform by selecting a better function.
+//
+// The code for most of this is at https://gist.github.com/hansihe/55c7c8c5ffe03ba4c9e2
+const FACTORS: [f32; 11] = [
+    6.52302987e-01, -1.72903489e+01, -1.12122237e+00, 2.77098705e+01,
+    6.83447908e-01, -1.38410486e+01, -1.54970218e-01, 4.01738791e-01,
+    -3.72274565e-03, 2.29025865e+00, 4.93543117e-03];
+
+/// Takes the output of one of the open_simplexn functions as an argument, returns the same value
+/// range as inputted, except transformed to a uniform probabilty distribution.
+pub fn normalize_simplex(val: f32) -> f32 {
+    let mut acc = 0f32;
+    acc += FACTORS[0] * val.powi(10);
+    acc += FACTORS[1] * val.powi(9);
+    acc += FACTORS[2] * val.powi(8);
+    acc += FACTORS[3] * val.powi(7);
+    acc += FACTORS[4] * val.powi(6);
+    acc += FACTORS[5] * val.powi(5);
+    acc += FACTORS[6] * val.powi(4);
+    acc += FACTORS[7] * val.powi(3);
+    acc += FACTORS[8] * val.powi(2);
+    acc += FACTORS[9] * val;
+    acc += FACTORS[10];
+    acc.min(1.0).max(-1.0)
+}

@@ -21,7 +21,7 @@ extern crate test;
 
 use noise::Seed;
 use noise::{perlin2, perlin3, perlin4};
-use noise::{open_simplex2, open_simplex3};
+use noise::{open_simplex2, open_simplex3, normalize_simplex};
 use noise::{cell2_range, cell3_range, cell4_range};
 use noise::{cell2_range_inv, cell3_range_inv, cell4_range_inv};
 use noise::{cell2_value, cell3_value, cell4_value};
@@ -58,6 +58,18 @@ fn bench_open_simplex2(bencher: &mut Bencher) {
 fn bench_open_simplex3(bencher: &mut Bencher) {
     let seed = Seed::new(0);
     bencher.iter(|| open_simplex3(black_box(&seed), black_box(&[42.0f64, 37.0, 26.0])));
+}
+
+#[bench]
+fn bench_open_simplex2_normalized(bencher: &mut Bencher) {
+    let seed = Seed::new(0);
+    bencher.iter(|| normalize_simplex(open_simplex2(black_box(&seed), black_box(&[42.0f32, 37.0]))));
+}
+
+#[bench]
+fn bench_open_simplex3_normalized(bencher: &mut Bencher) {
+    let seed = Seed::new(0);
+    bencher.iter(|| normalize_simplex(open_simplex3(black_box(&seed), black_box(&[42.0f32, 37.0, 26.0]))));
 }
 
 #[bench]
