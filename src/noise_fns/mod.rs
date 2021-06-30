@@ -1,8 +1,8 @@
 pub use self::{
-    /* cache::*,*/ combiners::*, generators::*, modifiers::*, selectors::*, transformers::*,
+    cache::*, combiners::*, generators::*, modifiers::*, selectors::*, transformers::*,
 };
 
-// mod cache;
+mod cache;
 mod combiners;
 mod generators;
 mod modifiers;

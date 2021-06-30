@@ -219,7 +219,7 @@ impl<'a> NoiseMapBuilder<'a> for PlaneMapBuilder<'a> {
                     let current_x = self.x_bounds.0 + x_step * x as f64;
                     let readable = lock.read().unwrap();
 
-                    let final_value = if is_seamless {
+                    if is_seamless {
                         let sw_value = readable.source_module.get([current_x, current_y, 0.0]);
                         let se_value =
                             readable
@@ -244,14 +244,12 @@ impl<'a> NoiseMapBuilder<'a> for PlaneMapBuilder<'a> {
                         interpolate::linear(y0, y1, y_blend)
                     } else {
                         self.source_module.get([current_x, current_y, 0.0])
-                    };
-
-                    final_value
+                    }
                 })
                 .collect();
 
-            for x in 0..width {
-                result_map.set_value(x, y, final_values[x]);
+            for (x, value) in final_values.iter().enumerate() {
+                result_map.set_value(x, y, *value);
             }
         }
 

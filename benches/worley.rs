@@ -1,8 +1,7 @@
-#[macro_use]
 extern crate criterion;
 extern crate noise;
 
-use criterion::{Benchmark, *};
+use criterion::*;
 use noise::{NoiseFn, ReturnType, Worley};
 use rand::Rng;
 

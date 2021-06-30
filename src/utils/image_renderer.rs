@@ -494,6 +494,7 @@ fn u8_array_to_f64_array(input: [u8; 4]) -> [f64; 4] {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
 
