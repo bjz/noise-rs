@@ -27,7 +27,7 @@ pub struct RidgedMulti {
     /// The number of octaves control the _amount of detail_ in the noise
     /// function. Adding more octaves increases the detail, with the drawback
     /// of increasing the calculation time.
-    pub octaves: usize,
+    pub octaves: u8,
 
     /// The number of cycles per unit length that the noise function outputs.
     pub frequency: f64,
@@ -62,12 +62,11 @@ pub struct RidgedMulti {
 
 impl RidgedMulti {
     pub const DEFAULT_SEED: u32 = 0;
-    pub const DEFAULT_OCTAVE_COUNT: usize = 6;
+    pub const DEFAULT_OCTAVE_COUNT: u8 = 6;
     pub const DEFAULT_FREQUENCY: f64 = 1.0;
     pub const DEFAULT_LACUNARITY: f64 = core::f64::consts::PI * 2.0 / 3.0;
     pub const DEFAULT_PERSISTENCE: f64 = 1.0;
     pub const DEFAULT_ATTENUATION: f64 = 2.0;
-    pub const MAX_OCTAVES: usize = 32;
 
     pub fn new(seed: u32) -> Self {
         Self {
@@ -96,12 +95,11 @@ impl Default for RidgedMulti {
 }
 
 impl MultiFractal for RidgedMulti {
-    fn set_octaves(self, mut octaves: usize) -> Self {
+    fn set_octaves(self, octaves: u8) -> Self {
         if self.octaves == octaves {
             return self;
         }
 
-        octaves = octaves.clamp(1, Self::MAX_OCTAVES);
         Self {
             octaves,
             sources: super::build_sources(self.seed, octaves),
@@ -153,7 +151,7 @@ impl NoiseFn<f64, 2> for RidgedMulti {
 
         point *= self.frequency;
 
-        for x in 0..self.octaves {
+        for x in 0..self.octaves as usize {
             // Get the value.
             let mut signal = self.sources[x].get(point.into_array());
 
@@ -201,7 +199,7 @@ impl NoiseFn<f64, 3> for RidgedMulti {
 
         point *= self.frequency;
 
-        for x in 0..self.octaves {
+        for x in 0..self.octaves as usize {
             // Get the value.
             let mut signal = self.sources[x].get(point.into_array());
 
@@ -249,7 +247,7 @@ impl NoiseFn<f64, 4> for RidgedMulti {
 
         point *= self.frequency;
 
-        for x in 0..self.octaves {
+        for x in 0..self.octaves as usize {
             // Get the value.
             let mut signal = self.sources[x].get(point.into_array());
 

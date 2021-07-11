@@ -13,15 +13,13 @@ pub struct Turbulence<Source> {
     /// Source function that outputs a value.
     pub source: Source,
 
-    /// Frequency value for the Turbulence function.
-    pub frequency: f64,
+    frequency: f64,
 
     /// Controls the strength of the turbulence by affecting how much each
     /// point is moved.
     pub power: f64,
 
-    /// Affects the roughness of the turbulence. Higher values are rougher.
-    pub roughness: usize,
+    roughness: u8,
 
     seed: u32,
     x_distort_function: Fbm,
@@ -34,7 +32,7 @@ impl<Source> Turbulence<Source> {
     pub const DEFAULT_SEED: u32 = 0;
     pub const DEFAULT_FREQUENCY: f64 = 1.0;
     pub const DEFAULT_POWER: f64 = 1.0;
-    pub const DEFAULT_ROUGHNESS: usize = 3;
+    pub const DEFAULT_ROUGHNESS: u8 = 3;
 
     pub fn new(source: Source) -> Self {
         Self {
@@ -62,6 +60,7 @@ impl<Source> Turbulence<Source> {
         }
     }
 
+    /// Affects the roughness of the turbulence. Higher values are rougher.
     pub fn set_frequency(self, frequency: f64) -> Self {
         Self {
             frequency,
@@ -77,7 +76,8 @@ impl<Source> Turbulence<Source> {
         Self { power, ..self }
     }
 
-    pub fn set_roughness(self, roughness: usize) -> Self {
+    /// Affects the roughness of the turbulence. Higher values are rougher.
+    pub fn set_roughness(self, roughness: u8) -> Self {
         Self {
             roughness,
             x_distort_function: self.x_distort_function.set_octaves(roughness),

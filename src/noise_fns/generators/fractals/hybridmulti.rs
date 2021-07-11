@@ -15,7 +15,7 @@ pub struct HybridMulti {
     /// The number of octaves control the _amount of detail_ in the noise
     /// function. Adding more octaves increases the detail, with the drawback
     /// of increasing the calculation time.
-    pub octaves: usize,
+    pub octaves: u8,
 
     /// The number of cycles per unit length that the noise function outputs.
     pub frequency: f64,
@@ -44,7 +44,7 @@ pub struct HybridMulti {
 
 impl HybridMulti {
     pub const DEFAULT_SEED: u32 = 0;
-    pub const DEFAULT_OCTAVES: usize = 6;
+    pub const DEFAULT_OCTAVES: u8 = 6;
     pub const DEFAULT_FREQUENCY: f64 = 2.0;
     pub const DEFAULT_LACUNARITY: f64 = core::f64::consts::PI * 2.0 / 3.0;
     pub const DEFAULT_PERSISTENCE: f64 = 0.25;
@@ -69,12 +69,11 @@ impl Default for HybridMulti {
 }
 
 impl MultiFractal for HybridMulti {
-    fn set_octaves(self, mut octaves: usize) -> Self {
+    fn set_octaves(self, octaves: u8) -> Self {
         if self.octaves == octaves {
             return self;
         }
 
-        octaves = octaves.clamp(1, Self::MAX_OCTAVES);
         Self {
             octaves,
             sources: super::build_sources(self.seed, octaves),
@@ -127,7 +126,7 @@ impl NoiseFn<f64, 2> for HybridMulti {
         let mut weight = result;
 
         // Spectral construction inner loop, where the fractal is built.
-        for x in 1..self.octaves {
+        for x in 1..self.octaves as usize {
             // Prevent divergence.
             weight = weight.max(1.0);
 
@@ -163,7 +162,7 @@ impl NoiseFn<f64, 3> for HybridMulti {
         let mut weight = result;
 
         // Spectral construction inner loop, where the fractal is built.
-        for x in 1..self.octaves {
+        for x in 1..self.octaves as usize {
             // Prevent divergence.
             weight = weight.max(1.0);
 
@@ -199,7 +198,7 @@ impl NoiseFn<f64, 4> for HybridMulti {
         let mut weight = result;
 
         // Spectral construction inner loop, where the fractal is built.
-        for x in 1..self.octaves {
+        for x in 1..self.octaves as usize {
             // Prevent divergence.
             weight = weight.max(1.0);
 
